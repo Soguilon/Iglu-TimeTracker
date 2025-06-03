@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Iglu Time Tracker</title>
+<style>
+  /* Reset some default margins and paddings */
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #87CEEB;
+    color: #fff;
+    text-align: center;
+    padding: 2em 1em;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5em;
+  }
+
+  input[type="text"] {
+    width: 90%;
+    max-width: 400px;
+    padding: 15px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 1.5em;
+    outline: none;
+    color: #333;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    flex: 1 1 120px;
+    max-width: 150px;
+    padding: 15px 0;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+  }
+
+  button#timeIn {
+    background-color: #fff;
+    color: #87CEEB;
+  }
+
+  button#timeIn:hover {
+    background-color: #d6e9f9;
+  }
+
+  button#timeOut {
+    background-color: #fff;
+    color: #87CEEB;
+  }
+
+  button#timeOut:hover {
+    background-color: #d6e9f9;
+  }
+
+  p#response {
+    margin-top: 1.5em;
+    font-weight: bold;
+    font-size: 1.1rem;
+    min-height: 1.5em;
+  }
+</style>
+</head>
+<body>
+
+<h1>Iglu Time Tracker</h1>
+
+<input type="text" id="name" placeholder="Enter your name" autocomplete="off" autocorrect="off" autocapitalize="words" />
+
+<div class="button-container">
+  <button id="timeIn" onclick="submitTime('Time In')">Time In</button>
+  <button id="timeOut" onclick="submitTime('Time Out')">Time Out</button>
+</div>
+
+<p id="response"></p>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLWQ1uZbJGmy5uic9fYIV0RsioU0cY7Etzp7Mf89Qtp6pmVRH92d8K3KvDII8vg2ZO/exec';
+
+  function submitTime(type) {
+    const name = document.getElementById('name').value.trim();
+    if (!name) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('name', name);
+    params.append('type', type);
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    .then(response => response.text())
+    .then(text => {
+      document.getElementById('response').textContent = text;
+      document.getElementById('name').value = '';
+    })
+    .catch(error => {
+      document.getElementById('response').textContent = 'Error: Could not record time.';
+      console.error(error);
+    });
+  }
+</script>
+
+</body>
+</html>
